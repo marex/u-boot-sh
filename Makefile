@@ -792,7 +792,7 @@ ALL-$(CONFIG_OF_HOSTFILE) += u-boot.dtb
 ifneq ($(CONFIG_SPL_TARGET),)
 ALL-$(CONFIG_SPL) += $(CONFIG_SPL_TARGET:"%"=%)
 endif
-ALL-$(CONFIG_REMAKE_ELF) += u-boot.elf
+ALL-$(CONFIG_REMAKE_ELF) += u-boot.elf u-boot-elf.srec
 ALL-$(CONFIG_EFI_APP) += u-boot-app.efi
 ALL-$(CONFIG_EFI_STUB) += u-boot-payload.efi
 
@@ -924,6 +924,11 @@ OBJCOPYFLAGS_u-boot.hex := -O ihex
 OBJCOPYFLAGS_u-boot.srec := -O srec
 
 u-boot.hex u-boot.srec: u-boot FORCE
+	$(call if_changed,objcopy)
+
+OBJCOPYFLAGS_u-boot-elf.srec := $(OBJCOPYFLAGS_u-boot.srec)
+
+u-boot-elf.srec: u-boot.elf FORCE
 	$(call if_changed,objcopy)
 
 OBJCOPYFLAGS_u-boot-nodtb.bin := -O binary \
