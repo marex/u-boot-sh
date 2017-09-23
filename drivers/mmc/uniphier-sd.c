@@ -30,10 +30,17 @@ struct uniphier_sd_plat {
 #if CONFIG_IS_ENABLED(MMC_HS200_SUPPORT)
 static void uniphier_sd_reset_tuning(struct uniphier_sd_priv *priv)
 {
+	if (priv->caps & UNIPHIER_SD_CAP_RCAR_UHS)
+		rcar_gen3_sd_reset_tuning(priv);
 }
 
 static int uniphier_sd_execute_tuning(struct udevice *dev, uint opcode)
 {
+	struct uniphier_sd_priv *priv = dev_get_priv(dev);
+
+	if (priv->caps & UNIPHIER_SD_CAP_RCAR_UHS)
+		return rcar_gen3_sd_execute_tuning(dev, opcode);
+
 	return -EINVAL;
 }
 #else

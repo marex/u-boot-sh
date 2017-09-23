@@ -261,6 +261,15 @@ config MMC_UNIPHIER
 	  This selects support for the Matsushita SD/MMC Host Controller on
 	  SocioNext UniPhier and Renesas RCar SoCs.
 
+config MMC_RENESAS_TUNING
+	bool "RCar SDHI Host Controller SDR104/HS200 support"
+	depends on RCAR_GEN3
+	depends on MMC_UNIPHIER
+	depends on MMC_HS200_SUPPORT
+	help
+	  This selects support for the SDR104/HS200 tuning on
+	  Renesas RCar Gen3 SoCs.
+
 config MMC_BCM2835
 	bool "BCM2835 family custom SD/MMC Host Controller support"
 	depends on ARCH_BCM283X

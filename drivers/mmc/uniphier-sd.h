@@ -137,4 +137,19 @@ u32 uniphier_sd_readl(struct uniphier_sd_priv *priv, unsigned int reg);
 void uniphier_sd_writel(struct uniphier_sd_priv *priv,
 			u32 val, unsigned int reg);
 
+/* Renesas RCar Gen3 tuning procedures */
+#if CONFIG_IS_ENABLED(MMC_RENESAS_TUNING)
+void rcar_gen3_sd_reset_tuning(struct uniphier_sd_priv *priv);
+int rcar_gen3_sd_execute_tuning(struct udevice *dev, uint opcode);
+#else
+static void rcar_gen3_sd_reset_tuning(struct uniphier_sd_priv *priv)
+{
+}
+
+static int rcar_gen3_sd_execute_tuning(struct udevice *dev, uint opcode)
+{
+	return -EINVAL;
+}
+#endif
+
 #endif /* __MMC_UNIPHIER_SD_H__ */
