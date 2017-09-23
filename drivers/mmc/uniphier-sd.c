@@ -1120,16 +1120,15 @@ static int uniphier_sd_probe(struct udevice *dev)
 	plat->cfg.name = dev->name;
 	plat->cfg.host_caps |= MMC_MODE_HS_52MHz | MMC_MODE_HS;
 
-	if (quirks) {
+	if (quirks)
 		priv->caps = quirks;
-	} else {
-		priv->version = uniphier_sd_readl(priv, UNIPHIER_SD_VERSION) &
-							UNIPHIER_SD_VERSION_IP;
-		dev_dbg(dev, "version %x\n", priv->version);
-		if (priv->version >= 0x10) {
-			priv->caps |= UNIPHIER_SD_CAP_DMA_INTERNAL;
-			priv->caps |= UNIPHIER_SD_CAP_DIV1024;
-		}
+
+	priv->version = uniphier_sd_readl(priv, UNIPHIER_SD_VERSION) &
+						UNIPHIER_SD_VERSION_IP;
+	dev_dbg(dev, "version %x\n", priv->version);
+	if (priv->version >= 0x10) {
+		priv->caps |= UNIPHIER_SD_CAP_DMA_INTERNAL;
+		priv->caps |= UNIPHIER_SD_CAP_DIV1024;
 	}
 
 	if (fdt_get_property(gd->fdt_blob, dev_of_offset(dev), "non-removable",
