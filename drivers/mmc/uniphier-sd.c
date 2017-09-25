@@ -10,6 +10,7 @@
 #include <fdtdec.h>
 #include <mmc.h>
 #include <dm.h>
+#include <dm/pinctrl.h>
 #include <linux/compat.h>
 #include <linux/dma-direction.h>
 #include <linux/io.h>
@@ -134,6 +135,9 @@ struct uniphier_sd_priv {
 #define UNIPHIER_SD_CAP_DMA_INTERNAL	BIT(1)	/* have internal DMA engine */
 #define UNIPHIER_SD_CAP_DIV1024		BIT(2)	/* divisor 1024 is available */
 #define UNIPHIER_SD_CAP_64BIT		BIT(3)	/* Controller is 64bit */
+#ifdef CONFIG_DM_REGULATOR
+	struct udevice *vqmmc_dev;
+#endif
 };
 
 static u64 uniphier_sd_readq(struct uniphier_sd_priv *priv, unsigned int reg)
@@ -676,6 +680,24 @@ static void uniphier_sd_set_clk_rate(struct uniphier_sd_priv *priv,
 	udelay(1000);
 }
 
+static void uniphier_sd_set_pins(struct udevice *dev)
+{
+	struct uniphier_sd_priv *priv = dev_get_priv(dev);
+	struct mmc *mmc = mmc_get_mmc_dev(dev);
+
+	if (priv->vqmmc_dev) {
+		if (mmc->signal_voltage == MMC_SIGNAL_VOLTAGE_180)
+			regulator_set_value(priv->vqmmc_dev, 1800000);
+		else
+			regulator_set_value(priv->vqmmc_dev, 3300000);
+	}
+
+	if (mmc->signal_voltage == MMC_SIGNAL_VOLTAGE_180)
+		pinctrl_select_state(dev, "state_uhs");
+	else
+		pinctrl_select_state(dev, "default");
+}
+
 static int uniphier_sd_set_ios(struct udevice *dev)
 {
 	struct uniphier_sd_priv *priv = dev_get_priv(dev);
@@ -690,6 +712,7 @@ static int uniphier_sd_set_ios(struct udevice *dev)
 		return ret;
 	uniphier_sd_set_ddr_mode(priv, mmc);
 	uniphier_sd_set_clk_rate(priv, mmc);
+	uniphier_sd_set_pins(dev);
 
 	return 0;
 }
@@ -757,9 +780,6 @@ static int uniphier_sd_probe(struct udevice *dev)
 	fdt_addr_t base;
 	struct clk clk;
 	int ret;
-#ifdef CONFIG_DM_REGULATOR
-	struct udevice *vqmmc_dev;
-#endif
 
 	base = devfdt_get_addr(dev);
 	if (base == FDT_ADDR_T_NONE)
@@ -770,12 +790,7 @@ static int uniphier_sd_probe(struct udevice *dev)
 		return -ENOMEM;
 
 #ifdef CONFIG_DM_REGULATOR
-	ret = device_get_supply_regulator(dev, "vqmmc-supply", &vqmmc_dev);
-	if (!ret) {
-		/* Set the regulator to 3.3V until we support 1.8V modes */
-		regulator_set_value(vqmmc_dev, 3300000);
-		regulator_set_enable(vqmmc_dev, true);
-	}
+	ret = device_get_supply_regulator(dev, "vqmmc-supply", &priv->vqmmc_dev);
 #endif
 
 	ret = clk_get_by_index(dev, 0, &clk);
