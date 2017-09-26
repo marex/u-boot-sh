@@ -135,6 +135,8 @@ struct uniphier_sd_priv {
 #define UNIPHIER_SD_CAP_DMA_INTERNAL	BIT(1)	/* have internal DMA engine */
 #define UNIPHIER_SD_CAP_DIV1024		BIT(2)	/* divisor 1024 is available */
 #define UNIPHIER_SD_CAP_64BIT		BIT(3)	/* Controller is 64bit */
+#define UNIPHIER_SD_CAP_RCAR		BIT(4)	/* Renesas RCar version of IP */
+#define UNIPHIER_SD_CAP_RCAR_UHS	BIT(5)	/* Renesas RCar UHS/SDR modes */
 #ifdef CONFIG_DM_REGULATOR
 	struct udevice *vqmmc_dev;
 #endif
@@ -852,11 +854,14 @@ static int uniphier_sd_probe(struct udevice *dev)
 	return 0;
 }
 
+#define RENESAS_SD_QUIRKS					\
+	UNIPHIER_SD_CAP_64BIT | UNIPHIER_SD_CAP_RCAR | UNIPHIER_SD_CAP_RCAR_UHS
+
 static const struct udevice_id uniphier_sd_match[] = {
-	{ .compatible = "renesas,sdhi-r8a7795", .data = UNIPHIER_SD_CAP_64BIT },
-	{ .compatible = "renesas,sdhi-r8a7796", .data = UNIPHIER_SD_CAP_64BIT },
-	{ .compatible = "renesas,sdhi-r8a77970", .data = UNIPHIER_SD_CAP_64BIT },
-	{ .compatible = "renesas,sdhi-r8a77995", .data = UNIPHIER_SD_CAP_64BIT },
+	{ .compatible = "renesas,sdhi-r8a7795", .data = RENESAS_SD_QUIRKS },
+	{ .compatible = "renesas,sdhi-r8a7796", .data = RENESAS_SD_QUIRKS },
+	{ .compatible = "renesas,sdhi-r8a77970", .data = RENESAS_SD_QUIRKS },
+	{ .compatible = "renesas,sdhi-r8a77995", .data = RENESAS_SD_QUIRKS },
 	{ .compatible = "socionext,uniphier-sdhc", .data = 0 },
 	{ /* sentinel */ }
 };
