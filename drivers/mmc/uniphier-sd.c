@@ -74,6 +74,7 @@ DECLARE_GLOBAL_DATA_PTR;
 #define   UNIPHIER_SD_CLKCTL_DIV4	BIT(0)	/* SDCLK = CLK / 4 */
 #define   UNIPHIER_SD_CLKCTL_DIV2	0	/* SDCLK = CLK / 2 */
 #define   UNIPHIER_SD_CLKCTL_DIV1	BIT(10)	/* SDCLK = CLK */
+#define   UNIPHIER_SD_CLKCTL_RCAR_DIV1	0xff	/* SDCLK = CLK (RCar ver.) */
 #define   UNIPHIER_SD_CLKCTL_OFFEN	BIT(9)	/* stop SDCLK when unused */
 #define   UNIPHIER_SD_CLKCTL_SCLKEN	BIT(8)	/* SDCLK output enable */
 #define UNIPHIER_SD_SIZE		0x04c	/* block size */
@@ -640,7 +641,8 @@ static void uniphier_sd_set_clk_rate(struct uniphier_sd_priv *priv,
 	divisor = DIV_ROUND_UP(priv->mclk, mmc->clock);
 
 	if (divisor <= 1)
-		val = UNIPHIER_SD_CLKCTL_DIV1;
+		val = (priv->caps & UNIPHIER_SD_CAP_RCAR) ?
+		      UNIPHIER_SD_CLKCTL_RCAR_DIV1 : UNIPHIER_SD_CLKCTL_DIV1;
 	else if (divisor <= 2)
 		val = UNIPHIER_SD_CLKCTL_DIV2;
 	else if (divisor <= 4)
