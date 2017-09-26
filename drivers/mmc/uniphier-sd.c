@@ -134,6 +134,11 @@ struct uniphier_sd_priv {
 #define UNIPHIER_SD_CAP_DMA_INTERNAL	BIT(1)	/* have internal DMA engine */
 #define UNIPHIER_SD_CAP_DIV1024		BIT(2)	/* divisor 1024 is available */
 #define UNIPHIER_SD_CAP_64BIT		BIT(3)	/* Controller is 64bit */
+#define UNIPHIER_SD_CAP_RCAR_GEN2	BIT(4)	/* Renesas RCar version of IP */
+#define UNIPHIER_SD_CAP_RCAR_GEN3	BIT(5)	/* Renesas RCar version of IP */
+#define UNIPHIER_SD_CAP_RCAR_UHS	BIT(6)	/* Renesas RCar UHS/SDR modes */
+#define UNIPHIER_SD_CAP_RCAR		\
+	(UNIPHIER_SD_CAP_RCAR_GEN2 | UNIPHIER_SD_CAP_RCAR_GEN3)
 };
 
 static u64 uniphier_sd_readq(struct uniphier_sd_priv *priv, unsigned int reg)
@@ -837,16 +842,21 @@ static int uniphier_sd_probe(struct udevice *dev)
 	return 0;
 }
 
+#define RENESAS_GEN2_QUIRKS	UNIPHIER_SD_CAP_RCAR_GEN2
+#define RENESAS_GEN3_QUIRKS					\
+	UNIPHIER_SD_CAP_64BIT | UNIPHIER_SD_CAP_RCAR_GEN3 | 	\
+	UNIPHIER_SD_CAP_RCAR_UHS
+
 static const struct udevice_id uniphier_sd_match[] = {
-	{ .compatible = "renesas,sdhi-r8a7790", .data = 0 },
-	{ .compatible = "renesas,sdhi-r8a7791", .data = 0 },
-	{ .compatible = "renesas,sdhi-r8a7792", .data = 0 },
-	{ .compatible = "renesas,sdhi-r8a7793", .data = 0 },
-	{ .compatible = "renesas,sdhi-r8a7794", .data = 0 },
-	{ .compatible = "renesas,sdhi-r8a7795", .data = UNIPHIER_SD_CAP_64BIT },
-	{ .compatible = "renesas,sdhi-r8a7796", .data = UNIPHIER_SD_CAP_64BIT },
-	{ .compatible = "renesas,sdhi-r8a77970", .data = UNIPHIER_SD_CAP_64BIT },
-	{ .compatible = "renesas,sdhi-r8a77995", .data = UNIPHIER_SD_CAP_64BIT },
+	{ .compatible = "renesas,sdhi-r8a7790", .data = RENESAS_GEN2_QUIRKS },
+	{ .compatible = "renesas,sdhi-r8a7791", .data = RENESAS_GEN2_QUIRKS },
+	{ .compatible = "renesas,sdhi-r8a7792", .data = RENESAS_GEN2_QUIRKS },
+	{ .compatible = "renesas,sdhi-r8a7793", .data = RENESAS_GEN2_QUIRKS },
+	{ .compatible = "renesas,sdhi-r8a7794", .data = RENESAS_GEN2_QUIRKS },
+	{ .compatible = "renesas,sdhi-r8a7795", .data = RENESAS_GEN3_QUIRKS },
+	{ .compatible = "renesas,sdhi-r8a7796", .data = RENESAS_GEN3_QUIRKS },
+	{ .compatible = "renesas,sdhi-r8a77970", .data = RENESAS_GEN3_QUIRKS },
+	{ .compatible = "renesas,sdhi-r8a77995", .data = RENESAS_GEN3_QUIRKS },
 	{ .compatible = "socionext,uniphier-sdhc", .data = 0 },
 	{ /* sentinel */ }
 };
