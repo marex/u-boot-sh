@@ -108,8 +108,8 @@ DECLARE_GLOBAL_DATA_PTR;
 #define   UNIPHIER_SD_DMA_RST_RD	BIT(9)
 #define   UNIPHIER_SD_DMA_RST_WR	BIT(8)
 #define UNIPHIER_SD_DMA_INFO1		0x420
-#define   UNIPHIER_SD_DMA_INFO1_END_RD2	BIT(20)	/* DMA from device is complete*/
-#define   UNIPHIER_SD_DMA_INFO1_END_RD	BIT(17)	/* Don't use!  Hardware bug */
+#define   UNIPHIER_SD_DMA_INFO1_END_RD2	BIT(20)	/* DMA from device is complete (uniphier) */
+#define   UNIPHIER_SD_DMA_INFO1_END_RD	BIT(17)	/* DMA from device is complete (renesas) */
 #define   UNIPHIER_SD_DMA_INFO1_END_WR	BIT(16)	/* DMA to device is complete */
 #define UNIPHIER_SD_DMA_INFO1_MASK	0x424
 #define UNIPHIER_SD_DMA_INFO2		0x428
@@ -443,7 +443,15 @@ static int uniphier_sd_dma_xfer(struct udevice *dev, struct mmc_data *data)
 	if (data->flags & MMC_DATA_READ) {
 		buf = data->dest;
 		dir = DMA_FROM_DEVICE;
-		poll_flag = UNIPHIER_SD_DMA_INFO1_END_RD2;
+		/*
+		 * The DMA READ completion flag position differs on Socionext
+		 * and Renesas SoCs. It is bit 20 on Socionext SoCs and using
+		 * bit 17 is a hardware bug and forbidden. It is bit 17 on
+		 * Renesas SoCs and bit 20 does not work on them.
+		 */
+		poll_flag = (priv->caps & UNIPHIER_SD_CAP_RCAR) ?
+			    UNIPHIER_SD_DMA_INFO1_END_RD :
+			    UNIPHIER_SD_DMA_INFO1_END_RD2;
 		tmp |= UNIPHIER_SD_DMA_MODE_DIR_RD;
 	} else {
 		buf = (void *)data->src;
