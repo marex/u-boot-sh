@@ -603,6 +603,7 @@ static int uniphier_sd_set_bus_width(struct uniphier_sd_priv *priv,
 	u32 val, tmp;
 
 	switch (mmc->bus_width) {
+	case 0:
 	case 1:
 		val = UNIPHIER_SD_OPTION_WIDTH_1;
 		break;
