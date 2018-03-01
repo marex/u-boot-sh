@@ -25,7 +25,6 @@
 /*
  * SPL
  */
-#define CONFIG_SPL_TARGET	"u-boot-with-spl.bin"
 #define CONFIG_SPL_MAX_SIZE	2048
 #define CONFIG_SPL_TEXT_BASE    0xA0000000
 

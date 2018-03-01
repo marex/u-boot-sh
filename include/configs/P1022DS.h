@@ -12,7 +12,6 @@
 
 #ifdef CONFIG_SDCARD
 #define CONFIG_SPL_FLUSH_IMAGE
-#define CONFIG_SPL_TARGET		"u-boot-with-spl.bin"
 #define CONFIG_SPL_TEXT_BASE		0xf8f81000
 #define CONFIG_SPL_PAD_TO		0x20000
 #define CONFIG_SPL_MAX_SIZE		(128 * 1024)
@@ -31,7 +30,6 @@
 #ifdef CONFIG_SPIFLASH
 #define CONFIG_SPL_SPI_FLASH_MINIMAL
 #define CONFIG_SPL_FLUSH_IMAGE
-#define CONFIG_SPL_TARGET		"u-boot-with-spl.bin"
 #define CONFIG_SPL_TEXT_BASE		0xf8f81000
 #define CONFIG_SPL_PAD_TO		0x20000
 #define CONFIG_SPL_MAX_SIZE		(128 * 1024)
@@ -76,7 +74,6 @@
 #endif
 #define CONFIG_SPL_PAD_TO		0x20000
 #define CONFIG_TPL_PAD_TO		0x20000
-#define CONFIG_SPL_TARGET		"u-boot-with-spl.bin"
 #define CONFIG_SYS_LDSCRIPT	"arch/powerpc/cpu/mpc85xx/u-boot-nand.lds"
 #endif
 

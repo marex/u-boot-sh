@@ -2660,11 +2660,6 @@ FIT uImage format:
 		CONFIG_SPL_PAD_TO must be either 0, meaning to append the SPL
 		payload without any padding, or >= CONFIG_SPL_MAX_SIZE.
 
-		CONFIG_SPL_TARGET
-		Final target image containing SPL and payload.  Some SPLs
-		use an arch-specific makefile fragment instead, for
-		example if more than one image needs to be produced.
-
 		CONFIG_SPL_FIT_PRINT
 		Printing information about a FIT image adds quite a bit of
 		code to SPL. So this is normally disabled in SPL. Use this

@@ -85,7 +85,6 @@
 #endif
 
 #if defined(CONFIG_QSPI_BOOT) && defined(CONFIG_SPL)
-#define CONFIG_SPL_TARGET		"spl/u-boot-spl.pbl"
 #define CONFIG_SPL_TEXT_BASE		0x10000000
 #define CONFIG_SPL_MAX_SIZE		0x1f000
 #define CONFIG_SPL_STACK		0x10020000

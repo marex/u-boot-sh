@@ -220,7 +220,6 @@
 /* subtract sizeof(struct image_header) */
 #define CONFIG_SYS_UBOOT_BASE			(0x130000 - 0x40)
 
-#define CONFIG_SPL_TARGET			"u-boot-with-spl.bin"
 #define CONFIG_SPL_MAX_FOOTPRINT		0x10000
 #define CONFIG_SPL_MAX_SIZE			0x10000
 #define CONFIG_SPL_BSS_MAX_SIZE			0x2000

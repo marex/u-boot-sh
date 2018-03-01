@@ -22,7 +22,6 @@
 
 #define CONFIG_MACH_TYPE	MACH_TYPE_MX31_3DS
 
-#define CONFIG_SPL_TARGET	"u-boot-with-spl.bin"
 #define CONFIG_SPL_MAX_SIZE	2048
 
 #define CONFIG_SPL_TEXT_BASE	0x87dc0000

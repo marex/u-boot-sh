@@ -404,6 +404,13 @@ config SPL_FIT_GENERATOR
 	  passed a list of supported device tree file stub names to
 	  include in the generated image.
 
+config SPL_TARGET
+	string "Default U-Boot SPL build target"
+	help
+	  Final target image containing SPL and payload. Some SPLs use an
+	  arch-specific makefile fragment instead, for example if more than
+	  one image needs to be produced.
+
 endif # SPL
 
 endif # FIT
