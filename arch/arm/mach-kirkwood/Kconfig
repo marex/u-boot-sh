@@ -1,5 +1,8 @@
 if KIRKWOOD
 
+config BUILD_TARGET
+	default "u-boot.kwb"
+
 choice
 	prompt "Marvell Kirkwood board select"
 	optional

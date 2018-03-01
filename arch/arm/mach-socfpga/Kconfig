@@ -1,5 +1,8 @@
 if ARCH_SOCFPGA
 
+config BUILD_TARGET
+	default "u-boot-with-spl.sfp"
+
 config SPL_LIBCOMMON_SUPPORT
 	default y
 

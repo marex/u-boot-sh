@@ -1,5 +1,8 @@
 if RCAR_GEN3
 
+config BUILD_TARGET
+	default "u-boot-elf.srec"
+
 choice
 	prompt "Select Target SoC"
 

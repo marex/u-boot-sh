@@ -4,6 +4,9 @@ config HAVE_MVEBU_EFUSE
 	bool
 	default n
 
+config BUILD_TARGET
+	default "u-boot-spl.kwb" if SPL_BUILD
+
 config ARMADA_32BIT
 	bool
 	select CPU_V7
