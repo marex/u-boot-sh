@@ -221,6 +221,16 @@ config BUILD_ROM
 	  which are not shipped in the U-Boot source tree.
 	  Please, see doc/README.x86 for details.
 
+config BUILD_TARGET
+	string "Default U-Boot build target"
+	default "u-boot.bin"
+	help
+	  Some SoCs need special image types (e.g. U-Boot binary
+	  with a special header) as build targets. By defining
+	  CONFIG_BUILD_TARGET in the SoC / board header, this
+	  special image will be automatically built upon calling
+	  make / buildman.
+
 endmenu		# General setup
 
 menu "Boot images"
