@@ -1,6 +1,9 @@
 menu "mpc85xx CPU"
 	depends on MPC85xx
 
+config SPL_TARGET
+	default "u-boot-with-spl.bin"
+
 config SYS_CPU
 	default "mpc85xx"
 

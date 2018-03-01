@@ -1,5 +1,8 @@
 if TARGET_DHCOMIMX6
 
+config SPL_BUILD
+	default "u-boot-with-spl.imx"
+
 config SYS_BOARD
 	default "dh_imx6"
 

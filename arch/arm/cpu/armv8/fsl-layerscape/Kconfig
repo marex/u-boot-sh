@@ -1,3 +1,6 @@
+config SPL_BUILD
+	default "u-boot-with-spl.bin"
+
 config ARCH_LS1012A
 	bool
 	select ARMV8_SET_SMPEN

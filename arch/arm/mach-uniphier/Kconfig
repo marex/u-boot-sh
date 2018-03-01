@@ -1,5 +1,8 @@
 if ARCH_UNIPHIER
 
+config SPL_BUILD
+	default "u-boot-with-spl.bin"
+
 config SYS_CONFIG_NAME
 	default "uniphier"
 

@@ -1,5 +1,8 @@
 if TARGET_M53EVK
 
+config SPL_BUILD
+	default "u-boot-with-nand-spl.imx"
+
 config SYS_BOARD
 	default "m53evk"
 

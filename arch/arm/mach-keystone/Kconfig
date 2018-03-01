@@ -1,5 +1,8 @@
 if ARCH_KEYSTONE
 
+config SPL_BUILD
+	default "u-boot-spi.gph"
+
 choice
 	prompt "TI Keystone board select"
 	optional

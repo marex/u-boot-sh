@@ -1,5 +1,8 @@
 if TARGET_MX31PDK
 
+config SPL_BUILD
+	default "u-boot-with-spl.bin"
+
 config SPL_LDSCRIPT
 	default "arch/$(ARCH)/cpu/u-boot-spl.lds"
 
