@@ -38,28 +38,25 @@ static int uniphier_sd_probe(struct udevice *dev)
 	struct clk clk;
 	int ret;
 
-	ret = clk_get_by_index(dev, 0, &clk);
+	ret = clk_get_by_index(dev, 0, &priv->clk);
 	if (ret < 0) {
 		dev_err(dev, "failed to get host clock\n");
 		return ret;
 	}
 
 	/* set to max rate */
-	priv->mclk = clk_set_rate(&clk, ULONG_MAX);
-	if (IS_ERR_VALUE(priv->mclk)) {
+	ret = clk_set_rate(&priv->clk, ULONG_MAX);
+	if (ret < 0) {
 		dev_err(dev, "failed to set rate for host clock\n");
-		clk_free(&clk);
-		return priv->mclk;
+		clk_free(&priv->clk);
+		return ret;
 	}
 
 	ret = clk_enable(&clk);
-	clk_free(&clk);
 	if (ret) {
 		dev_err(dev, "failed to enable host clock\n");
 		return ret;
 	}
-#else
-	priv->mclk = 100000000;
 #endif
 
 	return tmio_sd_probe(dev, 0);
