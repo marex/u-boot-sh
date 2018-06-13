@@ -556,11 +556,14 @@ static void tmio_sd_set_clk_rate(struct tmio_sd_priv *priv,
 {
 	unsigned int divisor;
 	u32 val, tmp;
+	ulong mclk;
 
 	if (!mmc->clock)
 		return;
 
-	divisor = DIV_ROUND_UP(priv->mclk, mmc->clock);
+	mclk = clk_get_rate(&priv->clk);
+
+	divisor = DIV_ROUND_UP(mclk, mmc->clock);
 
 	if (divisor <= 1)
 		val = (priv->caps & TMIO_SD_CAP_RCAR) ?
@@ -704,6 +707,7 @@ int tmio_sd_probe(struct udevice *dev, u32 quirks)
 	struct tmio_sd_priv *priv = dev_get_priv(dev);
 	struct mmc_uclass_priv *upriv = dev_get_uclass_priv(dev);
 	fdt_addr_t base;
+	ulong mclk;
 	int ret;
 
 	base = devfdt_get_addr(dev);
@@ -744,10 +748,12 @@ int tmio_sd_probe(struct udevice *dev, u32 quirks)
 
 	tmio_sd_host_init(priv);
 
+	mclk = clk_get_rate(&priv->clk);
+
 	plat->cfg.voltages = MMC_VDD_165_195 | MMC_VDD_32_33 | MMC_VDD_33_34;
-	plat->cfg.f_min = priv->mclk /
+	plat->cfg.f_min = mclk /
 			(priv->caps & TMIO_SD_CAP_DIV1024 ? 1024 : 512);
-	plat->cfg.f_max = priv->mclk;
+	plat->cfg.f_max = mclk;
 	plat->cfg.b_max = U32_MAX; /* max value of TMIO_SD_SECCNT */
 
 	upriv->mmc = &plat->mmc;

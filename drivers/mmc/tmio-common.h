@@ -117,7 +117,7 @@ struct tmio_sd_plat {
 
 struct tmio_sd_priv {
 	void __iomem			*regbase;
-	unsigned long			mclk;
+	struct clk			clk;
 	unsigned int			version;
 	u32				caps;
 #define TMIO_SD_CAP_NONREMOVABLE	BIT(0)	/* Nonremovable e.g. eMMC */
