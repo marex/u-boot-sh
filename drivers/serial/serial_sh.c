@@ -252,7 +252,7 @@ U_BOOT_DRIVER(serial_sh) = {
 #elif defined(CONFIG_CONS_SCIF1)
 # define SCIF_BASE	SCIF1_BASE
 #elif defined(CONFIG_CONS_SCIF2)
-# define SCIF_BASE	SCIF2_BASE
+# define SCIF_BASE	0xe6e60000
 #elif defined(CONFIG_CONS_SCIF3)
 # define SCIF_BASE	SCIF3_BASE
 #elif defined(CONFIG_CONS_SCIF4)

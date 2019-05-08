@@ -243,7 +243,7 @@ static int initr_malloc(void)
 	ulong malloc_start;
 
 #if CONFIG_VAL(SYS_MALLOC_F_LEN)
-	debug("Pre-reloc malloc() used %#lx bytes (%ld KB)\n", gd->malloc_ptr,
+	printf("Pre-reloc malloc() used %#lx bytes (%ld KB)\n", gd->malloc_ptr,
 	      gd->malloc_ptr / 1024);
 #endif
 	/* The malloc area is immediately below the monitor copy in DRAM */
@@ -325,7 +325,7 @@ __weak int power_init_board(void)
 
 static int initr_announce(void)
 {
-	debug("Now running in RAM - U-Boot at: %08lx\n", gd->relocaddr);
+	printf("Now running in RAM - U-Boot at: %08lx\n", gd->relocaddr);
 	return 0;
 }
 
@@ -568,7 +568,7 @@ static int initr_net(void)
 	puts("Net:   ");
 	eth_initialize();
 #if defined(CONFIG_RESET_PHY_R)
-	debug("Reset Ethernet PHY\n");
+	printf("Reset Ethernet PHY\n");
 	reset_phy();
 #endif
 	return 0;

@@ -479,13 +479,17 @@ static int reserve_malloc(void)
 /* (permanently) allocate a Board Info struct */
 static int reserve_board(void)
 {
+printf("%s[%i] %p\n", __func__, __LINE__, gd);
+printf("%s[%i] %p\n", __func__, __LINE__, gd->bd);
 	if (!gd->bd) {
 		gd->start_addr_sp -= sizeof(bd_t);
 		gd->bd = (bd_t *)map_sysmem(gd->start_addr_sp, sizeof(bd_t));
 		memset(gd->bd, '\0', sizeof(bd_t));
-		debug("Reserving %zu Bytes for Board Info at: %08lx\n",
+		printf("Reserving %zu Bytes for Board Info at: %08lx\n",
 		      sizeof(bd_t), gd->start_addr_sp);
 	}
+printf("%s[%i] %p\n", __func__, __LINE__, gd);
+printf("%s[%i] %p\n", __func__, __LINE__, gd->bd);
 	return 0;
 }
 
@@ -982,7 +986,7 @@ void board_init_f(ulong boot_flags)
 {
 	gd->flags = boot_flags;
 	gd->have_console = 0;
-
+memset(gd, 0, sizeof(gd_t));
 	if (initcall_run_list(init_sequence_f))
 		hang();
 

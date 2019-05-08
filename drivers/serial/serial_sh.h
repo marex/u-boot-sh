@@ -62,9 +62,9 @@ struct uart_port {
 # define SCSPTR0 0xfe4b0020
 # define SCSPTR1 0xfe4b0020
 # define SCSPTR2 0xfe4b0020
-# define SCIF_ORER 0x0001
-# define SCSCR_INIT(port)	0x38
-# define SCIF_ONLY
+#  define SCIF_ORER	0x0001
+# define SCSCR_INIT(port)	(port->clk_mode == EXT_CLK ? 0x32 : 0x30)
+				/* TIE=0,RIE=0,TE=1,RE=1,REIE=0, */
 #elif defined(CONFIG_CPU_SH7763)
 # define SCSPTR0 0xffe00024 /* 16 bit SCIF */
 # define SCSPTR1 0xffe08024 /* 16 bit SCIF */

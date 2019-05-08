@@ -26,11 +26,11 @@ ENTRY(_start)
 SECTIONS
 {
 	reloc_dst = .;
-
+/* Odd reloc magic from flash->TEXT_BASE, ignore for now
 	PROVIDE (_ftext = .);
 	PROVIDE (_fcode = .);
 	PROVIDE (_start = .);
-
+*/
 	.text :
 	{
 		KEEP(*/start.o		(.text))

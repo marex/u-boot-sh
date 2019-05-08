@@ -6,6 +6,7 @@
 
 #include <asm-offsets.h>
 #include <config.h>
+#include <asm/macro.h>
 
 	.text
 	.align	2
@@ -18,7 +19,8 @@ _start:
 
 	bsr	1f
 	nop
-1:	sts	pr, r5
+/* Relocation from flash to TEXT_BASE, FIXME, skip */
+1:/*	sts	pr, r5
 	mov.l	._reloc_dst, r4
 	add	#(_start-1b), r5
 	mov.l	._reloc_dst_end, r6
@@ -28,7 +30,7 @@ _start:
 	add	#4, r4
 	cmp/hs	r6, r4
 	bf	2b
-
+*/
 	mov.l	._bss_start, r4
 	mov.l	._bss_end, r5
 	mov	#0, r1
