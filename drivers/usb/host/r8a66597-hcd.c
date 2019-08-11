@@ -58,17 +58,17 @@ static void get_hub_data(struct usb_device *dev, u16 *hub_devnum, u16 *hubport)
 
 	/* check a device connected to root_hub */
 	if ((parent && parent->devnum == 1) ||
-	    (dev->devnum == 1))
+	    dev->devnum == 1)
 		return;
 
 	*hub_devnum = (u8)parent->devnum;
 	*hubport = parent->portnr - 1;
 
-	printf("get_hub_data error.\n");
+	printf("%s error.\n", __func__);
 }
 
 static void set_devadd(struct r8a66597 *r8a66597, u8 r8a66597_address,
-			struct usb_device *dev, int port)
+		       struct usb_device *dev, int port)
 {
 	u16 val, usbspd, upphub, hubport;
 	unsigned long devadd_reg = get_devadd_addr(r8a66597_address);
@@ -323,7 +323,7 @@ static int send_bulk_packet(struct r8a66597 *r8a66597, struct usb_device *dev,
 	R8A66597_DPRINT("%s\n", __func__);
 
 	r8a66597_mdfy(r8a66597, MBW | BULK_OUT_PIPENUM,
-			MBW | CURPIPE, CFIFOSEL);
+		      MBW | CURPIPE, CFIFOSEL);
 	r8a66597_reg_wait(r8a66597, CFIFOSEL, CURPIPE, BULK_OUT_PIPENUM);
 	tmp = r8a66597_read(r8a66597, CFIFOCTR);
 	if ((tmp & FRDY) == 0) {
@@ -347,7 +347,7 @@ static int send_bulk_packet(struct r8a66597 *r8a66597, struct usb_device *dev,
 	dev->act_len += size;
 
 	r8a66597_mdfy(r8a66597, PID_BUF, PID,
-			get_pipectr_addr(BULK_OUT_PIPENUM));
+		      get_pipectr_addr(BULK_OUT_PIPENUM));
 
 	while (!(r8a66597_read(r8a66597, BEMPSTS) & (1 << BULK_OUT_PIPENUM)))
 		if (ctrlc())
@@ -356,7 +356,7 @@ static int send_bulk_packet(struct r8a66597 *r8a66597, struct usb_device *dev,
 
 	if (dev->act_len >= transfer_len)
 		r8a66597_mdfy(r8a66597, PID_NAK, PID,
-				get_pipectr_addr(BULK_OUT_PIPENUM));
+			      get_pipectr_addr(BULK_OUT_PIPENUM));
 
 	return 0;
 }
@@ -377,17 +377,17 @@ static int receive_bulk_packet(struct r8a66597 *r8a66597,
 	/* prepare */
 	if (dev->act_len == 0) {
 		r8a66597_mdfy(r8a66597, PID_NAK, PID,
-				get_pipectr_addr(pipenum));
+			      get_pipectr_addr(pipenum));
 		r8a66597_write(r8a66597, ~(1 << pipenum), BRDYSTS);
 
 		r8a66597_write(r8a66597, TRCLR, get_pipetre_addr(pipenum));
 		r8a66597_write(r8a66597,
-				(transfer_len + maxpacket - 1) / maxpacket,
+			       (transfer_len + maxpacket - 1) / maxpacket,
 				get_pipetrn_addr(pipenum));
 		r8a66597_bset(r8a66597, TRENB, get_pipetre_addr(pipenum));
 
 		r8a66597_mdfy(r8a66597, PID_BUF, PID,
-				get_pipectr_addr(pipenum));
+			      get_pipectr_addr(pipenum));
 	}
 
 	r8a66597_mdfy(r8a66597, MBW | pipenum, MBW | CURPIPE, CFIFOSEL);
@@ -464,7 +464,7 @@ static int receive_control_packet(struct r8a66597 *r8a66597,
 }
 
 static int send_status_packet(struct r8a66597 *r8a66597,
-			       unsigned long pipe)
+			      unsigned long pipe)
 {
 	r8a66597_bset(r8a66597, SQSET, DCPCTR);
 	r8a66597_mdfy(r8a66597, PID_NAK, PID, DCPCTR);
@@ -555,9 +555,7 @@ static int check_usb_device_connecting(struct r8a66597 *r8a66597)
 	return -1;	/* fail */
 }
 
-/*-------------------------------------------------------------------------*
- * Virtual Root Hub
- *-------------------------------------------------------------------------*/
+/* Virtual Root Hub */
 
 #include <usbroothubdes.h>
 
@@ -639,34 +637,34 @@ static int r8a66597_submit_rh_msg(struct udevice *udev, struct usb_device *dev,
 		switch ((wValue & 0xff00) >> 8) {
 		case (0x01): /* device descriptor */
 			len = min_t(unsigned int,
-				  leni,
+				    leni,
 				  min_t(unsigned int,
-				      sizeof(root_hub_dev_des),
+					sizeof(root_hub_dev_des),
 				      wLength));
 			memcpy(buffer, root_hub_dev_des, len);
 			break;
 		case (0x02): /* configuration descriptor */
 			len = min_t(unsigned int,
-				  leni,
+				    leni,
 				  min_t(unsigned int,
-				      sizeof(root_hub_config_des),
+					sizeof(root_hub_config_des),
 				      wLength));
 			memcpy(buffer, root_hub_config_des, len);
 			break;
 		case (0x03): /* string descriptors */
 			if (wValue == 0x0300) {
 				len = min_t(unsigned int,
-					  leni,
+					    leni,
 					  min_t(unsigned int,
-					      sizeof(root_hub_str_index0),
+						sizeof(root_hub_str_index0),
 					      wLength));
 				memcpy(buffer, root_hub_str_index0, len);
 			}
 			if (wValue == 0x0301) {
 				len = min_t(unsigned int,
-					  leni,
+					    leni,
 					  min_t(unsigned int,
-					      sizeof(root_hub_str_index1),
+						sizeof(root_hub_str_index1),
 					      wLength));
 				memcpy(buffer, root_hub_str_index1, len);
 			}
@@ -699,7 +697,8 @@ static int r8a66597_submit_rh_msg(struct udevice *udev, struct usb_device *dev,
 		} else {
 			data[0] += 2;
 			data[8] = (temp & RH_B_DR) >> 8;
-			data[10] = data[9] = 0xff;
+			data[9] = 0xff;
+			data[10] = 0xff;
 		}
 
 		len = min_t(unsigned int, leni,
@@ -709,7 +708,7 @@ static int r8a66597_submit_rh_msg(struct udevice *udev, struct usb_device *dev,
 	}
 
 	case RH_GET_CONFIGURATION:
-		*(__u8 *) buffer = 0x01;
+		*(__u8 *)buffer = 0x01;
 		len = 1;
 		break;
 	case RH_SET_CONFIGURATION:
@@ -729,9 +728,10 @@ static int r8a66597_submit_rh_msg(struct udevice *udev, struct usb_device *dev,
 	return stat;
 }
 
-static int r8a66597_submit_control_msg(struct udevice *udev, struct usb_device *dev,
-				   unsigned long pipe, void *buffer, int length,
-				   struct devrequest *setup)
+static int r8a66597_submit_control_msg(struct udevice *udev,
+				       struct usb_device *dev,
+				       unsigned long pipe, void *buffer,
+				       int length, struct devrequest *setup)
 {
 	struct r8a66597 *r8a66597 = dev_get_priv(udev);
 	u16 r8a66597_address = setup->request == USB_REQ_SET_ADDRESS ?
@@ -756,7 +756,7 @@ static int r8a66597_submit_control_msg(struct udevice *udev, struct usb_device *
 	dev->act_len = 0;
 	if (usb_pipein(pipe))
 		if (receive_control_packet(r8a66597, dev, buffer,
-						length) < 0)
+					   length) < 0)
 			return -1;
 
 	if (send_status_packet(r8a66597, pipe) < 0)
@@ -767,8 +767,9 @@ static int r8a66597_submit_control_msg(struct udevice *udev, struct usb_device *
 	return 0;
 }
 
-static int r8a66597_submit_bulk_msg(struct udevice *udev, struct usb_device *dev,
-				unsigned long pipe, void *buffer, int length)
+static int r8a66597_submit_bulk_msg(struct udevice *udev,
+				    struct usb_device *dev, unsigned long pipe,
+				    void *buffer, int length)
 {
 	struct r8a66597 *r8a66597 = dev_get_priv(udev);
 	int ret = 0;
@@ -790,10 +791,10 @@ static int r8a66597_submit_bulk_msg(struct udevice *udev, struct usb_device *dev
 
 		if (usb_pipein(pipe))
 			ret = receive_bulk_packet(r8a66597, dev, pipe, buffer,
-							length);
+						  length);
 		else
 			ret = send_bulk_packet(r8a66597, dev, pipe, buffer,
-							length);
+					       length);
 	}
 
 	if (ret == 0)
@@ -826,7 +827,7 @@ static int r8a66597_usb_probe(struct udevice *dev)
 	mdelay(100);
 
 	enable_controller(priv);
-	r8a66597_port_power(priv, 0 , 1);
+	r8a66597_port_power(priv, 0, 1);
 
 	/* check usb device */
 	check_usb_device_connecting(priv);
