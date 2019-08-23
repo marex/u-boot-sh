@@ -508,7 +508,7 @@ static int reserve_global_data(void)
 
 static int reserve_fdt(void)
 {
-#ifndef CONFIG_OF_EMBED
+#if CONFIG_IS_ENABLED(OF_CONTROL) && !defined(CONFIG_OF_EMBED)
 	/*
 	 * If the device tree is sitting immediately above our image then we
 	 * must relocate it. If it is embedded in the data section, then it
@@ -645,7 +645,7 @@ static int init_post(void)
 
 static int reloc_fdt(void)
 {
-#ifndef CONFIG_OF_EMBED
+#if CONFIG_IS_ENABLED(OF_CONTROL) && !defined(CONFIG_OF_EMBED)
 	if (gd->flags & GD_FLG_SKIP_RELOC)
 		return 0;
 	if (gd->new_fdt) {
