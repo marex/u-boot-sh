@@ -76,11 +76,6 @@ SECTIONS
 	PROVIDE (__init_end = .);
 	PROVIDE (reloc_dst_end = .);
 
-	. = ALIGN(128);
-	_end = .;
-
-	. += 0x8000;
-
 	PROVIDE (bss_start = .);
 	PROVIDE (__bss_start = .);
 	.bss :
