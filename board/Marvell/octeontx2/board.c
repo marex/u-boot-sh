@@ -65,7 +65,7 @@ void board_quiesce_devices(void)
 	/* Removes all RVU PF devices */
 	ret = uclass_get(UCLASS_ETH, &uc_dev);
 	if (uc_dev)
-		ret = uclass_destroy(uc_dev);
+		ret = uclass_destroy(uc_dev, DM_REMOVE_NORMAL);
 	if (ret)
 		printf("couldn't remove rvu pf devices\n");
 
@@ -77,7 +77,7 @@ void board_quiesce_devices(void)
 	/* Removes all CGX and RVU AF devices */
 	ret = uclass_get(UCLASS_MISC, &uc_dev);
 	if (uc_dev)
-		ret = uclass_destroy(uc_dev);
+		ret = uclass_destroy(uc_dev, DM_REMOVE_NORMAL);
 	if (ret)
 		printf("couldn't remove misc (cgx/rvu_af) devices\n");
 

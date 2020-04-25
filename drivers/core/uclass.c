@@ -104,10 +104,28 @@ fail_mem:
 	return ret;
 }
 
-int uclass_destroy(struct uclass *uc)
+int uclass_find_device_by_drv_flag(struct uclass *uc, const unsigned int flag,
+				   const bool neg, struct udevice **devp)
+{
+	struct udevice *dev;
+
+	*devp = NULL;
+	uclass_foreach_dev(dev, uc) {
+		if ((neg && (dev->driver->flags & flag)) ||
+		    (!neg && !(dev->driver->flags & flag))) {
+			*devp = dev;
+			return 0;
+		}
+	}
+
+	return -ENODEV;
+}
+
+int uclass_destroy(struct uclass *uc, unsigned int flag)
 {
 	struct uclass_driver *uc_drv;
 	struct udevice *dev;
+	bool late = flag & DM_REMOVE_LATE;
 	int ret;
 
 	/*
@@ -116,15 +134,15 @@ int uclass_destroy(struct uclass *uc)
 	 * unbound (by the recursion in the call to device_unbind() below).
 	 * We can loop until the list is empty.
 	 */
-	while (!list_empty(&uc->dev_head)) {
-		dev = list_first_entry(&uc->dev_head, struct udevice,
-				       uclass_node);
-		ret = device_remove(dev, DM_REMOVE_NORMAL | DM_REMOVE_NO_PD);
-		if (ret)
+	while (!uclass_find_device_by_drv_flag(uc, DM_FLAG_REMOVE_LATE, late, &dev)) {
+		ret = device_remove(dev, flag | DM_REMOVE_NO_PD);
+		if (ret) {
 			return log_msg_ret("remove", ret);
+		}
 		ret = device_unbind(dev);
-		if (ret)
+		if (ret) {
 			return log_msg_ret("unbind", ret);
+		}
 	}
 
 	uc_drv = uc->uc_drv;

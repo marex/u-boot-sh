@@ -82,16 +82,19 @@ void dm_leak_check_start(struct unit_test_state *uts)
 int dm_leak_check_end(struct unit_test_state *uts)
 {
 	struct mallinfo end;
-	int id, diff;
+	int i, id, diff;
 
 	/* Don't delete the root class, since we started with that */
-	for (id = UCLASS_ROOT + 1; id < UCLASS_COUNT; id++) {
-		struct uclass *uc;
+	for (i = 0; i < 2; i++) {
+		for (id = UCLASS_ROOT + 1; id < UCLASS_COUNT; id++) {
+			struct uclass *uc;
 
-		uc = uclass_find(id);
-		if (!uc)
-			continue;
-		ut_assertok(uclass_destroy(uc));
+			uc = uclass_find(id);
+			if (!uc)
+				continue;
+			ut_assertok(uclass_destroy(uc,
+				    i ? DM_REMOVE_LATE : DM_REMOVE_NORMAL));
+		}
 	}
 
 	end = mallinfo();
@@ -514,7 +517,7 @@ static int dm_test_uclass(struct unit_test_state *uts)
 	ut_asserteq(0, dm_testdrv_op_count[DM_TEST_OP_DESTROY]);
 	ut_assert(uc->priv);
 
-	ut_assertok(uclass_destroy(uc));
+	ut_assertok(uclass_destroy(uc, DM_REMOVE_LATE));
 	ut_asserteq(1, dm_testdrv_op_count[DM_TEST_OP_INIT]);
 	ut_asserteq(1, dm_testdrv_op_count[DM_TEST_OP_DESTROY]);
 

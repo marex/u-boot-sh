@@ -60,19 +60,23 @@ static int do_autoprobe(struct unit_test_state *uts)
 
 static int dm_test_destroy(struct unit_test_state *uts)
 {
-	int id;
+	int i, id;
 
-	for (id = 0; id < UCLASS_COUNT; id++) {
-		struct uclass *uc;
+	for (i = 0; i < 2; i++) {
+		for (id = 0; id < UCLASS_COUNT; id++) {
+			struct uclass *uc;
 
-		/*
-		 * If the uclass doesn't exist we don't want to create it. So
-		 * check that here before we call uclass_find_device().
-		 */
-		uc = uclass_find(id);
-		if (!uc)
-			continue;
-		ut_assertok(uclass_destroy(uc));
+			/*
+			 * If the uclass doesn't exist we don't want to
+			 * create it. So check that here before we call
+			 * uclass_find_device().
+			 */
+			uc = uclass_find(id);
+			if (!uc)
+				continue;
+			ut_assertok(uclass_destroy(uc,
+				    i ? DM_REMOVE_LATE : DM_REMOVE_NORMAL));
+		}
 	}
 
 	return 0;

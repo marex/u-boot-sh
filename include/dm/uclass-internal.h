@@ -247,8 +247,9 @@ struct uclass *uclass_find(enum uclass_id key);
  * Destroy a uclass and all its devices
  *
  * @uc: uclass to destroy
+ * @flag: driver flags (DM_REMOVE_NORMAL or DM_REMOVE_LATE)
  * @return 0 on success, -ve on error
  */
-int uclass_destroy(struct uclass *uc);
+int uclass_destroy(struct uclass *uc, unsigned int flag);
 
 #endif

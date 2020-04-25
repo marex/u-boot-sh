@@ -120,6 +120,7 @@ static void announce_and_cleanup(int fake)
 	 * of DMA operation or releasing device internal buffers.
 	 */
 	dm_remove_devices_flags(DM_REMOVE_ACTIVE_ALL);
+	dm_remove_devices_flags(DM_REMOVE_ACTIVE_ALL | DM_REMOVE_LATE);
 
 	cleanup_before_linux();
 }
